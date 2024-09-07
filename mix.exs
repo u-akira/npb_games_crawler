@@ -22,7 +22,8 @@ defmodule NpbGamesCrawler.MixProject do
   defp deps do
     [
       {:httpoison, "~> 2.2"},
-      {:floki, "~> 0.36.2"}
+      {:floki, "~> 0.36.2"},
+      {:jason, "~> 1.4"}
     ]
   end
 end
