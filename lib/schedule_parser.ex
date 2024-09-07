@@ -8,7 +8,7 @@ defmodule ScheduleParser do
   defp parse_score(document) do
     document
     |> Floki.find("tbody a[href]")
-    |> Enum.map(fn element -> Floki.attribute(element, "href") end)
+    |> Floki.attribute("href")
   end
 
 end
