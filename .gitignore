@@ -24,3 +24,4 @@ npb_games_crawler-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+/scores/
