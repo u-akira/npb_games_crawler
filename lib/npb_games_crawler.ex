@@ -5,12 +5,8 @@ defmodule NpbGamesCrawler do
 
   @base_url "https://npb.jp"
   #@game_months ["03","04", "05","06","07","08","09","10","11"]
-  @game_months ["03"]
+  @game_months ["04"]
 
-  #@game_url ["https://npb.jp/scores/2024/0329/g-t-01/"]
-
-
-  @spec crawl(any()) :: none()
   def crawl(year \\ "2024" ) do
     makeScoreLinks(year)
     |> Enum.map(&fetch_game/1)
