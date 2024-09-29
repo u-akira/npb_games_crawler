@@ -4,19 +4,27 @@ defmodule NpbGamesCrawler do
   """
 
   @base_url "https://npb.jp"
-  #@game_months ["03","04", "05","06","07","08","09","10","11"]
-  @game_months ["04"]
+  @game_months ["03","04", "05","06","07","08","09","10","11"]
 
-  def crawl(year \\ "2024" ) do
-    makeScoreLinks(year)
+  def crawl() do
+    IO.puts("取得する年月を指定してください.")
+  end
+  def crawl(year) do
+    makeScoreLinks(year, @game_months)
     |> Enum.map(&fetch_game/1)
-    |> Enum.map(&save_json_to_file/1)
+    |> Enum.map(&JsonStorage.save/1)
 
   end
 
-  @spec makeScoreLinks(any()) :: list()
-  def makeScoreLinks(year \\ "2024") do
-    links = @game_months
+  def crawl(year, months) do
+    makeScoreLinks(year, [months])
+    |> Enum.map(&fetch_game/1)
+    |> Enum.map(&JsonStorage.save/1)
+
+  end
+
+  def makeScoreLinks(year, months) do
+    links = months
     |> Enum.map(&build_schedule_url(year, &1))
     |> Enum.map(&fetch_schedule/1)
 
@@ -37,7 +45,7 @@ defmodule NpbGamesCrawler do
     |> ScheduleParser.parse()
   end
 
-  def build_game_url(url) do
+  defp build_game_url(url) do
     "#{@base_url}#{url}"
   end
 
@@ -57,33 +65,6 @@ defmodule NpbGamesCrawler do
       |> GameParser.parse()
 
       {score, path}
-    end
-  end
-
-  def save_json_to_file(nil) do
-    IO.puts("取得済み.")
-  end
-  def save_json_to_file({data, file_path}) do
-    dir_path = Path.dirname(file_path)
-
-    # フォルダが存在しなければ作成
-    unless File.exists?(dir_path) do
-      case File.mkdir_p(dir_path) do
-        :ok -> :ok
-        {:error, reason} -> {:error, "Failed to create directory: #{reason}"}
-      end
-    end
-
-    # Elixirのデータ構造をJSON文字列に変換
-    case Jason.encode(data) do
-      {:ok, json_string} ->
-        # JSON文字列を指定したファイルに書き込み
-        case File.write(file_path, json_string) do
-          :ok -> {:ok, "File saved successfully!"}
-          {:error, reason} -> {:error, "Failed to save file: #{reason}"}
-        end
-      {:error, reason} ->
-        {:error, "Failed to encode JSON: #{reason}"}
     end
   end
 end
