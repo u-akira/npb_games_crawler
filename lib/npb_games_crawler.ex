@@ -10,17 +10,21 @@ defmodule NpbGamesCrawler do
     IO.puts("取得する年月を指定してください.")
   end
   def crawl(year) do
-    makeScoreLinks(year, @game_months)
-    |> Enum.map(&fetch_game/1)
-    |> Enum.map(&JsonStorage.save/1)
-
+    crawlExecute(year,  @game_months)
   end
 
-  def crawl(year, months) do
-    makeScoreLinks(year, [months])
+  def crawl(year, months) when is_list(months) do
+    crawlExecute(year, months)
+  end
+
+  def crawl(year, month) do
+    crawlExecute(year, [month])
+  end
+
+  defp crawlExecute(year, months) do
+    makeScoreLinks(year, months)
     |> Enum.map(&fetch_game/1)
     |> Enum.map(&JsonStorage.save/1)
-
   end
 
   def makeScoreLinks(year, months) do
